@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-import plotly.express as px
+
 
 st.set_page_config(page_title="Pricing & Profitability Agent", layout="wide")
 
@@ -90,14 +90,15 @@ if uploaded_file:
         .sort_values("Loss_Ratio_Calc", ascending=False)
     )
 
-    st.plotly_chart(
-        px.bar(
-            loss_ratio_product,
-            x="Product_Type",
-            y="Loss_Ratio_Calc"
-        ),
-        use_container_width=True
-    )
+    st.subheader("Loss Ratio by Product")
+
+    loss_ratio_product = (
+        df.groupby("Product_Type")["Loss_Ratio_Calc"]
+        .mean()
+        .sort_values(ascending=False)
+)
+
+st.bar_chart(loss_ratio_product)
 
     # 2 Profit by Product
     st.subheader("Profit by Product")
@@ -108,14 +109,15 @@ if uploaded_file:
         .sort_values("Underwriting_Profit", ascending=False)
     )
 
-    st.plotly_chart(
-        px.bar(
-            product_profit,
-            x="Product_Type",
-            y="Underwriting_Profit"
-        ),
-        use_container_width=True
-    )
+    st.subheader("Profit by Product")
+
+    product_profit = (
+        df.groupby("Product_Type")["Underwriting_Profit"]
+        .sum()
+        .sort_values(ascending=False)
+)
+
+st.bar_chart(product_profit)
 
     # 3 Profitability Tier Classification
     st.subheader("Profitability Tiers")
@@ -162,14 +164,15 @@ if uploaded_file:
         .sort_values("Underwriting_Profit", ascending=False)
     )
 
-    st.plotly_chart(
-        px.bar(
-            state_df,
-            x="State",
-            y="Underwriting_Profit"
-        ),
-        use_container_width=True
-    )
+    st.subheader("State-wise Profitability")
+
+    state_df = (
+        df.groupby("State")["Underwriting_Profit"]
+        .sum()
+        .sort_values(ascending=False)
+)
+
+st.bar_chart(state_df)
 
     # 7 Monthly Trend (36 months)
     st.subheader("Monthly Profit Trend")
@@ -182,14 +185,16 @@ if uploaded_file:
         .tail(36)
     )
 
-    st.plotly_chart(
-        px.line(
-            monthly_df,
-            x="Date",
-            y="Underwriting_Profit"
-        ),
-        use_container_width=True
-    )
+    st.subheader("Monthly Profit Trend")
+
+    monthly_df = (
+        df.groupby(pd.Grouper(key="Date", freq="ME"))
+        ["Underwriting_Profit"]
+        .sum()
+        .tail(36)
+)
+
+st.line_chart(monthly_df)
 
     # 8 AI Pricing Insights
     st.subheader("AI Pricing Insights")
