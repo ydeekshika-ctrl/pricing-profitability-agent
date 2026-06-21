@@ -154,7 +154,6 @@ st.bar_chart(product_profit)
 
     # 6 Region-wise Profitability
     # Dataset has State instead of Region
-
     st.subheader("State-wise Profitability")
 
     state_df = (
